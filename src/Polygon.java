@@ -24,7 +24,7 @@ public class Polygon {
         }
 
     }
-    Polygon(Style style){
+    public Polygon(Style style){
         this.style = new Style("none" ,"black",1.0);
     }
 }

@@ -6,7 +6,6 @@ public class Segment {
         this.first = first;
         this.second = second;
     }
-
     public double returnLength(){
         return Math.sqrt(Math.pow((second.x - first.x)+(second.y) - first.y,2));
     }
