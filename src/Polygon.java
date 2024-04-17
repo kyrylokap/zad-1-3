@@ -1,30 +1,40 @@
-import java.util.Locale;
+public class Polygon implements Shape{
+    private Vec2[] points_tab;
+    private Style style;
 
-public class Polygon {
-     private Point []points;
-     private Style style;
-    public Polygon(Point[] points,Style style){
-        this.points = points;
-        this.style = style;
+    public Polygon(Vec2[] points_tab){
+        new Style("none","black",1);
+        this.points_tab=points_tab;
     }
-    public String toSvg(){
-        StringBuilder stringbuilder = new StringBuilder();
-        stringbuilder.append("<polygon points=\"");
-        for(Point point:points){
-            stringbuilder.append(point.x).append(",").append(point.y).append(" ");
+
+    public Polygon(Vec2[] points_tab, Style style){
+        this.style=style;
+        this.points_tab=points_tab;
+    }
+
+    public Polygon(Polygon poly){
+        new Style(poly.style.fillColor, poly.style.strokeColor, poly.style.strokeWidth);
+        this.points_tab = new Vec2[poly.points_tab.length];
+        for(int i=0;i< points_tab.length;i++) {
+            this.points_tab[i] = new Vec2(poly.points_tab[i].x, poly.points_tab[i].y);
         }
-        stringbuilder.append("\n").append("\" style=\"fill:none;stroke:black;stroke-width:1\"/>\n");
-
-        return stringbuilder.toString();
     }
-    public Polygon(Polygon src){
-        this.points = new Point[src.points.length];
-        for(int i = 0;i < points.length;i++){
-            this.points[i] = new Point(src.points[i].x,src.points[i].y);
+
+    public String toSvg(String parameters) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<polygon points=\"");
+        for(Vec2 p: points_tab) {
+            stringBuilder.append(p.x).append(",").append(p.y).append(" ");
         }
-
+        stringBuilder.append("\" ").append(parameters).append("/>");
+        return stringBuilder.toString();
     }
-    public Polygon(Style style){
-        this.style = new Style("none" ,"black",1.0);
+
+    public static Polygon square(Segment segment, Style style) {
+        Vec2 pointH = new Vec2(((segment.getStartPoint().x+segment.getEndPoint().x)/2),((segment.getStartPoint().y+segment.getEndPoint().y)/2));
+        Segment segmentH = new Segment(segment.getStartPoint(),pointH);
+        Segment[] secR = Segment.perpendicularSegments(segmentH,pointH);
+        Vec2[] pointsTab = {segment.getStartPoint(),secR[0].getEndPoint(),segment.getEndPoint(),secR[1].getEndPoint()};
+        return new Polygon(pointsTab,style);
     }
 }

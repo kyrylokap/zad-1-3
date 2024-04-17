@@ -1,34 +1,43 @@
-import java.util.Locale;
-
+import java.lang.Math;
 public class Segment {
-    private Point first,second;
-    Segment(Point first,Point second){
-        this.first = first;
-        this.second = second;
+
+    private Vec2 startPoint;
+    private Vec2 endPoint;
+
+    public Segment(Vec2 startPoint, Vec2 endPoint) {
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
     }
-    public double returnLength(){
-        return Math.sqrt(Math.pow((second.x - first.x)+(second.y) - first.y,2));
+
+    public Vec2 getStartPoint() {
+        return startPoint;
     }
-    public String toSvg(){
-        //return "<line x1 ='" +first.x  +"' y1 = '" + first.y+ "' x2 = '" + second.x+ "' y2= '"+ second.y +"stroke=\"black\"/>";
-    return String.format(Locale.ENGLISH,"<line x1 = '%f' y1 = '%f' x2 = '%f' y2 = '%f' stroke = 'black'/>",first.x,first.y,second.x,second.y);
+
+    public Vec2 getEndPoint() {
+        return endPoint;
     }
-    public static Segment[] perpendicularSegments(Segment segment, Point point) {
-        double dX = segment.second.x - segment.first.x;
-        double dY = segment.second.y - segment.first.y;
 
-        double perpDx1 = -dY;
-        double perpDy1 = dX;
+    public double length() {
+        return Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2));
 
-        double perpDx2 = dY;
-        double perpDy2 = -dX;
+    }
 
-        Point endPoint = new Point(point.x + perpDx1, point.y + perpDy1);
-        Point endPoint2 = new Point(point.x + perpDx2, point.y + perpDy2);
+    public String toSvg() {
+        return "<line x1=\"" + startPoint.x + "\" y1=\"" + startPoint.y + "\" x2=\"" + endPoint.x + "\" y2=\"" + endPoint.y + "\" stroke=\"black\" />";
+    }
 
-        Segment segment1 = new Segment(point, endPoint);
-        Segment segment2 = new Segment(point, endPoint2);
+    public static Segment[] perpendicularSegments(Segment segment, Vec2 point){
+        double dx = segment.endPoint.x - segment.startPoint.x;
+        double dy = segment.endPoint.y - segment.startPoint.y;
 
-        return new Segment[]{segment1, segment2};
+        Segment[] s_tab = new Segment[2];
+
+        Vec2 p1 = new Vec2(point.x-dy,point.y+dx);
+        s_tab[0] = new Segment(point,p1);
+
+        Vec2 p2 = new Vec2(point.x+dy,point.y-dx);
+        s_tab[1] = new Segment(point,p2);
+
+        return s_tab;
     }
 }
